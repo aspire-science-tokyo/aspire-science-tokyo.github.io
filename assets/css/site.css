@@ -1,0 +1,856 @@
+/* ==========================================================================
+   ASPIRE DT Platform — site stylesheet
+   Hand-written, no build step. This is the only stylesheet; edit freely.
+
+    1. Design tokens
+    2. Font
+    3. Reset & base
+    4. Layout (container, page, stacks, grids)
+    5. Header & navigation
+    6. Footer
+    7. Typography
+    8. Panels & cards
+    9. Small parts (pills, tags, badges, icons)
+   10. Page-specific components
+       home · research · team · outputs · news
+
+   Breakpoints: md = 48rem (768px), lg = 64rem (1024px), xl = 80rem (1280px)
+   ========================================================================== */
+
+
+/* 1. Design tokens ------------------------------------------------------- */
+
+:root {
+  --brand: #215d75;
+  --brand-weak: #7faeb9;
+  --bg: #f6f7f3;
+  --bg-alt: #eef4f2;
+  --surface: #ffffffe6;
+  --text: #18242d;
+  --text-muted: #627079;
+  --border: #215d751a;
+  --ring: #215d753d;
+  --link: #215d75;
+  --link-hover: #4b8797;
+  --focus-ring: #215d75a6;
+  --on-brand: #e8f2f4;
+  --on-brand-strong: #fff;
+  --footer-border: #e8f2f438;
+
+  /* research domains: text/icon colour and a pale background */
+  --mobility: #d68b5c;
+  --mobility-bg: #d68b5c24;
+  --manufacturing: #b89234;
+  --manufacturing-bg: #b8923424;
+  --nursing: #c86e70;
+  --nursing-bg: #c86e7024;
+  --agriculture: #5b9770;
+  --agriculture-bg: #5b977024;
+
+  /* news badges */
+  --badge-news-text: #215d75;
+  --badge-news-bg: #215d751f;
+  --badge-event-text: #ba6d3a;
+  --badge-event-bg: #ba6d3a24;
+  --badge-talk-text: #9c7a24;
+  --badge-talk-bg: #9c7a2424;
+  --badge-workshop-text: #487b5d;
+  --badge-workshop-bg: #487b5d24;
+
+  /* brand tints */
+  --brand-8: color-mix(in oklab, var(--brand) 8%, transparent);
+  --brand-10: color-mix(in oklab, var(--brand) 10%, transparent);
+  --brand-20: color-mix(in oklab, var(--brand) 20%, transparent);
+  --brand-30: color-mix(in oklab, var(--brand) 30%, transparent);
+
+  --font-sans: "Noto Sans JP", "Noto Sans JP Fallback", system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --shadow-sm: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+  --ease: cubic-bezier(.4, 0, .2, 1);
+}
+
+
+/* 2. Font ---------------------------------------------------------------- */
+
+/* Noto Sans JP, Latin subset only (one variable file covers weights 400–700).
+   The site is in English, so no Japanese glyphs are shipped. */
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(/assets/media/noto-sans-jp-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Arial tuned to Noto's metrics, so text doesn't jump while the font loads */
+@font-face {
+  font-family: "Noto Sans JP Fallback";
+  src: local("Arial");
+  ascent-override: 110.73%;
+  descent-override: 27.49%;
+  line-gap-override: 0%;
+  size-adjust: 104.76%;
+}
+
+
+/* 3. Reset & base -------------------------------------------------------- */
+
+*, ::before, ::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top, #7faeb933, transparent 32%),
+    linear-gradient(180deg, #fbfcfa 0, var(--bg) 52%, #eff3f1 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+ul, ol { list-style: none; }
+img, svg { display: block; max-width: 100%; height: auto; }
+button { font: inherit; color: inherit; background: none; cursor: pointer; }
+strong { font-weight: 600; color: var(--text); }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+a:hover { color: var(--link-hover); text-decoration: underline; }
+
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+a:focus-visible { border-radius: 6px; }
+
+/* in-page anchors land below the top edge */
+main [id] { scroll-margin-top: 6rem; }
+
+
+/* 4. Layout -------------------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+main { min-height: 60vh; }
+
+/* The page body: a vertical stack of sections.
+   Default gap 3rem; --compact 2.5rem; --spacious 4rem. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding-block: 3.5rem;
+}
+.page--compact { gap: 2.5rem; }
+.page--spacious { gap: 4rem; }
+
+@media (min-width: 48rem) {
+  .container { padding-inline: 2rem; }
+  .page { padding-block: 5rem; }
+}
+@media (min-width: 64rem) {
+  .container { padding-inline: 2.5rem; }
+}
+
+/* vertical spacing for a group of blocks */
+.stack-xs { display: flex; flex-direction: column; gap: .25rem; }
+.stack-sm { display: flex; flex-direction: column; gap: .5rem; }
+.stack    { display: flex; flex-direction: column; gap: 1rem; }
+.stack-lg { display: flex; flex-direction: column; gap: 1.5rem; }
+.stack-xl { display: flex; flex-direction: column; gap: 2rem; }
+.stack-2xl { display: flex; flex-direction: column; gap: 3rem; }
+
+/* Responsive grid of equal columns: 1 on phones, then the numbers in the
+   class name: --2-3 = 2 columns from md (768px), 3 from xl (1280px);
+   --2-3lg = 3 already from lg (1024px). */
+.grid { display: grid; gap: 1rem; }
+@media (min-width: 48rem) {
+  .grid--2, .grid--2-3, .grid--2-3lg, .grid--2-4, .grid--2-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 64rem) {
+  .grid--2-3lg { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 80rem) {
+  .grid--2-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid--2-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid--2-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+/* text + figure side by side from xl up */
+.split { display: grid; gap: 1.5rem; }
+@media (min-width: 80rem) {
+  .split { grid-template-columns: 1fr 1fr; align-items: center; }
+  .split--2-3 { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+}
+
+/* rule above a block */
+.divided {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+
+/* 5. Header & navigation ------------------------------------------------- */
+
+.skip-link {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.skip-link:focus {
+  top: 1rem;
+  left: 1.5rem;
+  z-index: 50;
+  width: auto;
+  height: auto;
+  clip-path: none;
+  padding: .5rem 1rem;
+  border-radius: .375rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm), 0 0 0 2px var(--ring);
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.site-header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+}
+
+.logo { display: flex; flex-direction: column; }
+.logo:hover { text-decoration: none; }
+.logo__kicker {
+  font-size: .75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--brand-weak);
+  transition: color .15s var(--ease);
+}
+.logo__name {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -.025em;
+  color: var(--brand);
+  transition: color .15s var(--ease);
+}
+.logo:hover .logo__kicker { color: var(--brand); }
+.logo:hover .logo__name { color: var(--brand-weak); }
+
+.site-nav {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
+.site-nav a,
+.mobile-menu a { transition: color .15s var(--ease); }
+.site-nav a[aria-current="page"],
+.mobile-menu a[aria-current="page"] {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-color: var(--brand-weak);
+}
+
+.menu-button {
+  padding: .5rem;
+  border: 1px solid var(--border);
+  border-radius: .375rem;
+  color: var(--text);
+  transition: color .15s var(--ease), border-color .15s var(--ease);
+}
+.menu-button:hover { border-color: var(--brand-weak); color: var(--brand); }
+
+/* Collapsible mobile menu; main.js toggles .is-open */
+.mobile-menu {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .2s var(--ease), opacity .2s var(--ease);
+}
+.mobile-menu.is-open { grid-template-rows: 1fr; opacity: 1; }
+.mobile-menu nav {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
+.mobile-menu ul {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  padding-block: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .site-nav { display: flex; }
+  .menu-button, .mobile-menu { display: none; }
+}
+@media (min-width: 64rem) {
+  .site-nav { gap: 1.5rem; }
+}
+
+
+/* 6. Footer -------------------------------------------------------------- */
+
+.site-footer {
+  border-top: 1px solid var(--footer-border);
+  background: var(--brand);
+  color: var(--on-brand);
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: 2rem;
+  padding-block: 2rem;
+}
+@media (min-width: 48rem) {
+  .site-footer__grid { grid-template-columns: 1fr auto auto; align-items: start; }
+  .site-footer__legal { text-align: right; }
+}
+
+.site-footer a {
+  color: var(--on-brand-strong);
+  text-decoration: underline;
+  text-decoration-color: var(--on-brand);
+}
+.site-footer a:hover { color: var(--on-brand); }
+
+.site-footer__heading {
+  margin-bottom: .25rem;
+  font-weight: 500;
+  color: var(--on-brand-strong);
+}
+.site-footer nav .site-footer__heading { margin-bottom: .5rem; }
+.site-footer ul { display: flex; flex-direction: column; gap: .375rem; }
+.site-footer__legal { font-size: .75rem; line-height: 1rem; }
+
+
+/* 7. Typography ---------------------------------------------------------- */
+
+/* small uppercase label above a page title */
+.eyebrow {
+  font-size: .75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* small uppercase label for a value (facts, WP numbers, "Email") */
+.label {
+  font-size: .75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.page-title {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+
+/* h2 of a page section; grows on wider screens */
+.section-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+/* h2 that stays the same size (Outputs years, Team groups) */
+.group-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+
+/* h3 in cards */
+.card-title { font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; }
+.card-title--sm { font-size: 1rem; line-height: 1.5rem; }
+
+/* introductory paragraph under the page title */
+.lead {
+  max-width: 48rem;
+  font-size: 1.125rem;
+  line-height: 1.625;
+  color: var(--text-muted);
+}
+.lead--wide { max-width: 56rem; }
+
+/* one-line description under a section title */
+.section-intro {
+  max-width: 42rem;
+  font-size: .875rem;
+  line-height: 1.25rem;
+  color: var(--text-muted);
+}
+
+/* muted body copy; --grow steps up to 16px from md */
+.text {
+  font-size: .875rem;
+  line-height: 1.625;
+  color: var(--text-muted);
+}
+.text--base { font-size: 1rem; }
+.value { font-size: .875rem; line-height: 1.625; font-weight: 500; color: var(--text); }
+
+/* paragraphs inside a block of running text */
+.prose > * + * { margin-top: 1rem; }
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: var(--brand-weak);
+}
+.prose a:hover { text-decoration-color: currentColor; }
+
+.tagline { font-style: italic; color: var(--text); }
+.measure { max-width: 56rem; }
+.measure-md { max-width: 48rem; }
+.measure-sm { max-width: 36rem; }
+
+/* 16px semibold line, e.g. an e-mail address */
+.emphasis { font-size: 1rem; line-height: 1.5rem; font-weight: 600; color: var(--text); }
+
+@media (min-width: 48rem) {
+  .section-title { font-size: 1.875rem; line-height: 2.25rem; }
+  .section-intro { font-size: 1rem; line-height: 1.5rem; }
+  .text--grow { font-size: 1rem; }
+}
+
+/* section heading with a link on the right ("See all news →") */
+.section-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.section-bar a { font-size: .875rem; line-height: 1.25rem; font-weight: 500; }
+
+
+/* 8. Panels & cards ------------------------------------------------------ */
+
+/* Rounded background block around a section. Pick one variant. */
+.panel {
+  padding: 1.25rem;
+  border-radius: 1.5rem;
+  background: var(--bg-alt);
+}
+.panel--wash {
+  border-radius: 2rem;
+  background: linear-gradient(to bottom right in oklab,
+    var(--bg-alt), var(--surface), var(--bg-alt));
+}
+.panel--wash-light {
+  border-radius: 2rem;
+  background: linear-gradient(to bottom right in oklab,
+    var(--surface), var(--bg-alt), var(--surface));
+}
+@media (min-width: 48rem) {
+  .panel { padding: 1.5rem; }
+}
+
+/* White card. Children are spaced .5rem apart (.75rem after a .card__head). */
+.card {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.card > * + * { margin-top: .5rem; }
+.card > .card__head + * { margin-top: .75rem; }
+.card--roomy { padding: 1.5rem; }
+.card--plain { border: 0; box-shadow: none; }
+
+.card__head { display: flex; align-items: center; gap: .75rem; }
+
+
+/* 9. Small parts --------------------------------------------------------- */
+
+/* Icons are inline lucide SVGs (https://lucide.dev) with class="icon" */
+.icon { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+.icon--sm { width: 1rem; height: 1rem; }
+.icon--xs { width: .875rem; height: .875rem; }
+
+/* round icon holder: default brand tint, 2.25rem */
+.icon-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: var(--brand-10);
+  color: var(--brand);
+}
+.icon-badge--lg { width: 2.5rem; height: 2.5rem; }
+.icon-badge--xs { width: 1.5rem; height: 1.5rem; }
+.icon-badge--pale { background: var(--bg-alt); }
+.icon-badge--square { border-radius: .75rem; background: var(--brand-8); }
+
+/* row of rounded labels */
+.pills { display: flex; flex-wrap: wrap; gap: .75rem; }
+.pill {
+  padding: .5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--surface);
+  font-size: .875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+}
+.pill--soft { background: var(--bg-alt); font-weight: 500; }
+
+/* small outlined keyword chips (news tags, research topics) */
+.tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+.tag {
+  padding: .25rem .75rem;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  font-size: .75rem;
+  line-height: 1rem;
+  color: var(--brand);
+}
+
+/* news category badge; add a colour: --news, --event, --talk, --workshop */
+.badge {
+  padding: .25rem .5rem;
+  border: 1px solid;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+.badge--news     { border-color: var(--badge-news-text); background: var(--badge-news-bg); color: var(--badge-news-text); }
+.badge--event    { border-color: var(--badge-event-text); background: var(--badge-event-bg); color: var(--badge-event-text); }
+.badge--talk     { border-color: var(--badge-talk-text); background: var(--badge-talk-bg); color: var(--badge-talk-text); }
+.badge--workshop { border-color: var(--badge-workshop-text); background: var(--badge-workshop-bg); color: var(--badge-workshop-text); }
+
+/* small grey line of metadata (dates, places) */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+  font-size: .75rem;
+  line-height: 1rem;
+  color: var(--text-muted);
+}
+.meta--md { font-size: .875rem; line-height: 1.25rem; }
+
+
+/* 10. Page-specific components ------------------------------------------- */
+
+/* --- Home ---------------------------------------------------------------- */
+
+.home { background: var(--bg); }
+.home .page { gap: 3rem; padding-block: 2rem; }
+@media (min-width: 48rem) {
+  .home .page { gap: 4rem; padding-block: 4rem; }
+}
+
+.hero {
+  padding: 2.5rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  background: linear-gradient(to bottom right in oklab,
+    var(--surface), var(--surface), var(--bg-alt));
+  box-shadow: var(--shadow-sm);
+}
+.hero__grid { display: grid; gap: 1rem; }
+.hero__image { display: none; overflow: hidden; border-radius: 1rem; }
+.hero .page-title { font-size: 1.875rem; line-height: 2.25rem; }
+.hero .lead { max-width: 42rem; font-size: 1rem; }
+
+@media (min-width: 48rem) {
+  .hero { padding: 2.75rem 2rem; }
+  .hero__grid { grid-template-columns: 1fr auto; align-items: center; }
+  .hero__image { display: block; width: 11rem; }
+  .hero .page-title { font-size: 2.25rem; line-height: 2.5rem; }
+  .hero .lead { font-size: 1.125rem; }
+}
+@media (min-width: 80rem) {
+  .hero__image { width: 14rem; }
+}
+
+/* key facts row: "DURATION Dec 2025 to Mar 2031 · FOCUS …" */
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .875rem;
+  line-height: 1.25rem;
+}
+.facts > div { display: flex; align-items: center; gap: .5rem; }
+.facts dd { font-weight: 500; }
+
+/* --- Research ------------------------------------------------------------ */
+
+/* "Title: description" list with small round icons */
+.feature-list {
+  display: grid;
+  gap: 1rem 1.5rem;
+  margin-top: 1.5rem;
+}
+.feature-list li { display: flex; gap: .75rem; }
+.feature-list .icon-badge { margin-top: .125rem; }
+@media (min-width: 48rem) {
+  .feature-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* domain cards; set the colour with --mobility / --manufacturing / … */
+.domain-card { box-shadow: none; }
+.domain-card .icon-badge { background: var(--domain-bg); color: var(--domain); }
+.domain-card .tags { margin-top: 1rem; }
+.domain-card .tag {
+  border-color: color-mix(in oklab, var(--domain) 20%, transparent);
+  background: var(--domain-bg);
+  color: var(--domain);
+  font-weight: 500;
+}
+@media (min-width: 48rem) {
+  .domain-card { padding: 1.5rem; }
+}
+.domain--mobility      { --domain: var(--mobility);      --domain-bg: var(--mobility-bg); }
+.domain--manufacturing { --domain: var(--manufacturing); --domain-bg: var(--manufacturing-bg); }
+.domain--nursing       { --domain: var(--nursing);       --domain-bg: var(--nursing-bg); }
+.domain--agriculture   { --domain: var(--agriculture);   --domain-bg: var(--agriculture-bg); }
+
+/* Sense → Integrate → Evaluate → Refine */
+.cycle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.cycle .card__head { align-items: flex-start; }
+.cycle__arrow { display: none; align-items: center; color: var(--brand-30); }
+@media (min-width: 80rem) {
+  .cycle { grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; }
+  .cycle__arrow { display: flex; }
+}
+
+/* --- International exchange / Contact ------------------------------------ */
+
+.exchange-activities { display: grid; gap: 2rem; }
+@media (min-width: 80rem) {
+  .exchange-activities { grid-template-columns: .85fr 1.15fr; align-items: start; }
+}
+
+.contact-card { display: flex; flex-direction: column; gap: 1.25rem; }
+.card.contact-card > * + * { margin-top: 0; }
+.contact-card__email { display: inline-flex; color: var(--link); }
+.contact-card__note { line-height: 1.25rem; }
+
+/* --- Team ---------------------------------------------------------------- */
+
+/* sticky jump-links bar */
+.section-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin-inline: -1rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+  background: color-mix(in oklab, var(--bg) 85%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.section-nav ul { display: flex; flex-wrap: wrap; gap: .375rem .25rem; }
+.section-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .375rem .625rem;
+  border-radius: .5rem;
+  font-size: .75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  transition: color .15s var(--ease), background-color .15s var(--ease);
+}
+.section-nav a:hover { background: var(--brand-8); color: var(--brand); text-decoration: none; }
+@media (min-width: 48rem) {
+  .section-nav {
+    margin-inline: 0;
+    padding-inline: 1.25rem;
+    border: 1px solid color-mix(in oklab, var(--border) 40%, transparent);
+    border-radius: 1rem;
+    background: color-mix(in oklab, var(--surface) 80%, transparent);
+    box-shadow: var(--shadow-sm);
+  }
+  .section-nav ul { column-gap: .375rem; }
+}
+
+/* one Work Package block */
+.team-section {
+  border: 1px solid var(--brand-10);
+  border-radius: 2rem;
+}
+main .team-section { scroll-margin-top: 4rem; }  /* clears the sticky bar */
+.team-section .label { letter-spacing: .18em; }
+
+/* "GLOBAL CO-LEADS / PARTNER RESEARCHERS" */
+.group-label {
+  font-size: .875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* person card; --lead for the WP leader */
+.person {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  padding: 1rem;
+}
+.card.person > * + * { margin-top: 0; }
+.person__top { display: flex; gap: 1rem; }
+.person__avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  aspect-ratio: 4 / 5;
+  border: 1px dashed var(--border);
+  border-radius: 1rem;
+  background: var(--bg-alt);
+  font-size: .875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  color: var(--brand);
+}
+.person__name { font-size: 1rem; line-height: 1.25; font-weight: 600; }
+.person__role { font-size: .875rem; line-height: 1.375; font-weight: 500; }
+.person__org { font-size: .875rem; line-height: 1.25rem; color: var(--text-muted); }
+
+.person--lead {
+  border-color: var(--brand-30);
+  background: linear-gradient(to bottom right in oklab, var(--surface), var(--bg-alt));
+  box-shadow: 0 0 0 1px var(--brand-10), var(--shadow-sm);
+}
+.person--lead .person__avatar {
+  width: 5rem;
+  border: 1px solid var(--brand-20);
+  background: var(--brand-10);
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.person--lead .person__name { font-size: 1.125rem; }
+
+/* --- Outputs ------------------------------------------------------------- */
+
+.pub { display: flex; gap: 1rem; }
+.card.pub > * + * { margin-top: 0; }
+.pub > .icon-badge { margin-top: .25rem; }
+.pub__body { flex: 1; }
+.pub__tags { display: flex; flex-wrap: wrap; gap: .75rem; font-size: .75rem; line-height: 1rem; }
+.pub__tags span {
+  padding: .125rem .5rem;
+  border-radius: 9999px;
+  background: var(--brand-8);
+  color: color-mix(in oklab, var(--brand) 70%, transparent);
+}
+.pub__line { font-size: .875rem; line-height: 1.25rem; color: var(--text-muted); }
+
+/* --- News ---------------------------------------------------------------- */
+
+/* card in the news listing */
+.news-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+.card.news-card > * + * { margin-top: 0; }
+.news-card__image {
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--bg-alt);
+}
+.news-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .2s var(--ease);
+}
+.news-card__image img:hover { transform: scale(1.02); }
+.news-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: .75rem;
+  padding: 1.5rem;
+}
+
+/* single article page */
+.article { display: flex; flex-direction: column; gap: 2rem; }
+.article__head { display: flex; flex-direction: column; gap: .75rem; }
+.article__summary { max-width: 48rem; font-size: 1rem; line-height: 1.625; color: var(--text-muted); }
+.article__figure {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--bg-alt);
+}
+.article__figure img { width: 100%; }
+
+/* boxed paper reference inside an article */
+.citation {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+}
+.prose .citation > * + * { margin-top: .25rem; }
+.citation__title { font-weight: 500; color: var(--text); }
